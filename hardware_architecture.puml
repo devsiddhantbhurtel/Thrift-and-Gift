@@ -1,0 +1,58 @@
+@startuml Hardware Architecture
+
+skinparam backgroundColor white
+skinparam handwritten false
+skinparam monochrome false
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #666666
+
+!define RECTANGLE class
+
+RECTANGLE "Client Devices" as client {
+    [Web Browser]
+    [Mobile Browser]
+}
+
+RECTANGLE "Load Balancer" as lb {
+    [NGINX]
+}
+
+RECTANGLE "Web/Application Servers" as web {
+    [Django Application Server 1]
+    [Django Application Server 2]
+}
+
+RECTANGLE "Database Server" as db {
+    [Primary Database\nSQLite]
+}
+
+RECTANGLE "File Storage" as storage {
+    [Media Storage\n(Product Images)]
+}
+
+RECTANGLE "External Services" as external {
+    [Khalti Payment Gateway]
+}
+
+RECTANGLE "Security Layer" as security {
+    [SSL/TLS]
+    [Firewall]
+}
+
+' Connections
+client --> security : HTTPS
+security --> lb : HTTPS
+lb --> web : HTTP
+web --> db : TCP/IP
+web --> storage : TCP/IP
+web --> external : HTTPS
+
+' Layout hints
+client -[hidden]-> lb
+lb -[hidden]-> web
+web -[hidden]-> db
+web -[hidden]-> storage
+web -[hidden]-> external
+
+@enduml 

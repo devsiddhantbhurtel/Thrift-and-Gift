@@ -1,0 +1,42 @@
+@startuml
+skinparam backgroundColor white
+skinparam usecaseBackgroundColor #E6F3FF
+skinparam actorStyle Hollow
+
+rectangle {
+    actor Seller
+    actor Buyer
+    actor Admin
+
+    usecase "Donate Items" as donate
+    usecase "Add Items for Sale" as addItems
+    usecase "Manage Listings" as manage
+    usecase "Communicate with\nbuyer/seller" as communicate
+    usecase "Add Items to Cart" as cart
+    usecase "Search and Filter Items" as search
+    usecase "View Item Details" as view
+    usecase "Make Payment" as payment
+    usecase "Validate Payment Details" as validate
+    usecase "View Total Orders\nand Payments" as viewOrders
+    usecase "Manage Order and\nPayment Status" as manageStatus
+
+    Seller -right-> donate
+    Seller -right-> addItems
+    Seller -right-> manage
+    Seller -right-> communicate
+
+    Buyer -left-> cart
+    Buyer -left-> search
+    Buyer -left-> view
+    Buyer -left-> payment
+    Buyer -left-> communicate
+
+    Admin -right-> viewOrders
+    Admin -right-> manageStatus
+
+    search ..> view : <<include>>
+    communicate ..> validate : <<include>>
+    payment ..> validate : <<include>>
+}
+
+@enduml 

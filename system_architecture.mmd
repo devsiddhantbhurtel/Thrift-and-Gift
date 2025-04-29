@@ -1,0 +1,45 @@
+graph LR
+    Seller((Seller))
+    Buyer((Buyer))
+    Admin((Admin))
+
+    %% Seller Use Cases
+    DonateItems(Donate Items)
+    AddItems(Add Items for Sale)
+    ManageListings(Manage Listings)
+    Communicate(Communicate with buyer/seller)
+
+    %% Buyer Use Cases
+    AddCart(Add Items to Cart)
+    Search(Search and Filter Items)
+    ViewDetails(View Item Details)
+    MakePayment(Make Payment)
+
+    %% Admin Use Cases
+    ViewOrders(View Total Orders and Payments)
+    ManageStatus(Manage Order and Payment Status)
+
+    %% Payment Validation
+    ValidatePayment(Validate Payment Details)
+
+    %% Seller Connections
+    Seller --> DonateItems
+    Seller --> AddItems
+    Seller --> ManageListings
+    Seller --> Communicate
+
+    %% Buyer Connections
+    Buyer --> AddCart
+    Buyer --> Search
+    Buyer --> ViewDetails
+    Buyer --> MakePayment
+    Buyer --> Communicate
+
+    %% Admin Connections
+    Admin --> ViewOrders
+    Admin --> ManageStatus
+
+    %% Include Relationships
+    Search -.-> ViewDetails
+    MakePayment -.-> ValidatePayment
+    Communicate -.-> ValidatePayment
