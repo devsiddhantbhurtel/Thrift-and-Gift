@@ -1,11 +1,10 @@
-from rest_framework import viewsets
+from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, viewsets
 import requests
 from django.conf import settings
-from .models import Payment  # Import the Payment model
-from orders.models import Order  # Correctly import the Order model
+from .models import Payment
 from .serializers import PaymentSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
@@ -27,7 +26,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
     def update_status(self, request, pk=None):
         try:
             print(f"Attempting to update payment {pk} with data:", request.data)  # Debug log
-            payment = Payment.objects.get(payment_id=pk)  # Use payment_id instead of pk
+            payment = Payment.objects.get(payment_id=pk)
             new_status = request.data.get('payment_status')
             
             valid_statuses = ['pending', 'completed', 'failed']
@@ -70,6 +69,10 @@ class InitiateKhaltiPayment(APIView):
             purchase_order_id = data.get('purchase_order_id')
             purchase_order_name = data.get('purchase_order_name')
             customer_info = data.get('customer_info')
+            item_id = data.get('item_id')  # This will be a comma-separated string
+
+            # Take the first item_id for the payment record
+            first_item_id = item_id.split(',')[0] if item_id else None
 
             # Add debug logging
             print("Received amount:", amount)
@@ -80,7 +83,7 @@ class InitiateKhaltiPayment(APIView):
                 amount=amount // 100,  # Convert paisa to NPR for storage
                 payment_status='pending',
                 sender_id=data.get('sender_id'),
-                item_id=data.get('item_id')
+                item_id=first_item_id  # Use the first item_id
             )
 
             url = 'https://a.khalti.com/api/v2/epayment/initiate/'
@@ -149,21 +152,16 @@ class VerifyKhaltiPayment(APIView):
             payment_status = payment_data.get('payment_status')
 
             # Update the payment status in your database
-            payment = Payment.objects.get(payment_id=order_id)
-            payment.payment_status = payment_status
-            payment.save()
-
-            # Update the corresponding order status
             try:
-                order = Order.objects.get(order_id=order_id)
-                if payment_status == 'Completed':
-                    order.order_status = 'paid'  # Update to 'paid' or any status indicating success
-                else:
-                    order.order_status = 'payment_failed'
-                order.save()
-            except Order.DoesNotExist:
-                return Response({'error': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
+                payment = Payment.objects.get(payment_id=order_id)
+                payment.payment_status = payment_status
+                payment.save()
+            except Payment.DoesNotExist:
+                return Response({'error': 'Payment not found'}, status=status.HTTP_404_NOT_FOUND)
 
             return Response(payment_data)
         else:
-            return Response({'error': 'Payment verification failed'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {'error': 'Payment verification failed'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            ) 

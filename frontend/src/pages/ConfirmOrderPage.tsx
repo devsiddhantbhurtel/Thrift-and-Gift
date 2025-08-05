@@ -31,21 +31,28 @@ export function ConfirmOrderPage() {
   const [orderItems, setOrderItems] = useState<SingleOrderItem[]>([]);
 
   useEffect(() => {
-    console.log('Location State:', location.state);
-    console.log('Is Buy Now?:', location.state?.isBuyNow);
-    console.log('Buy Now Item:', location.state?.buyNowItem);
-    
-    // Strict Buy Now check
-    if (location.state?.isBuyNow === true && location.state?.buyNowItem) {
-      console.log('Setting Buy Now item');
-      setOrderItems([location.state.buyNowItem]);
-      return; // Exit early for Buy Now flow
+    // First check for Buy Now flow
+    if (location.state?.isBuyNow && location.state?.buyNowItem) {
+      const buyNowItem = location.state.buyNowItem;
+      const formattedItem = {
+        id: buyNowItem.id,
+        cart_item_id: buyNowItem.cart_item_id || 'buy-now',
+        name: buyNowItem.name,
+        price: buyNowItem.price,
+        quantity: buyNowItem.quantity || 1,
+        image: buyNowItem.image
+      };
+      setOrderItems([formattedItem]);
     }
-    
-    // Only set cart items if not in Buy Now flow
-    console.log('Setting cart items');
-    setOrderItems(cartItems);
-  }, [location.state, cartItems]);
+    // Only handle cart items if not in buy now flow
+    else if (cartItems.length > 0) {
+      setOrderItems(cartItems);
+    }
+    // Only redirect if we're not in buy now flow AND cart is empty
+    else if (!location.state?.isBuyNow && cartItems.length === 0) {
+      navigate('/thrift-store');
+    }
+  }, [location.state, cartItems, navigate]);
 
   // Calculate totals based on orderItems instead of cartItems
   const subtotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);

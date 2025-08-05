@@ -23,6 +23,7 @@ import ChatPage from './pages/ChatPage'; // Import the ChatPage
 import AdminDashboard from './components/AdminDashboard';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { IndividualConfirmOrder } from './pages/IndividualConfirmOrder';
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -61,7 +62,8 @@ function App() {
                 <Route element={<ProtectedRoute role="buyer" />}>
                   <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
                   <Route path="/orders" element={<OrdersPage />} />
-                  <Route path="/confirm-order" element={<ConfirmOrderPage />} /> {/* Accessible only to buyers */}
+                  <Route path="/confirm-order" element={<ConfirmOrderPage />} />
+                  <Route path="/individual-confirm-order" element={<IndividualConfirmOrder />} />
                 </Route>
 
                 <Route element={<ProtectedRoute requireSuperuser={true} />}>

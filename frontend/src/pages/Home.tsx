@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Star, Plus, Minus, Loader2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import api from '../services/api';
+import { ClothingBank } from './ClothingBank';
 
 // Defining types for featured products and categories
 interface Product {
@@ -251,12 +252,14 @@ export function Home() {
           instead? Submit a request for items, and we'll connect you with donors.
         </p>
         <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+          <Link to="/clothing-bank">
           <button className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors">
             Donate Clothes
           </button>
           <button className="bg-white text-blue-600 px-6 py-2 rounded-full border border-blue-600 hover:bg-blue-50 transition-colors">
             Request Clothes
           </button>
+          </Link>
         </div>
       </section>
     </div>

@@ -1,4 +1,3 @@
-# backend/clothing/views.py
 from rest_framework import viewsets
 from .models import ClothingItem
 from .serializers import ClothingItemSerializer
@@ -8,6 +7,7 @@ import logging
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.db.models import Q
+from django.utils import timezone
 import random
 
 # Set up logging
@@ -46,15 +46,15 @@ class ClothingItemViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         logger.debug(f"Request data: {request.data}")  # Log the incoming data
         instance = self.get_object()
-        
+
         # Handle removal
         if 'removed' in request.data and request.data['removed']:
             instance.removed = True
-            instance.removal_reason = request.data.get('removal_reason')
-            instance.removed_at = request.data.get('removed_at')
+            instance.removal_reason = request.data.get('removal_reason', '')
+            instance.removed_at = timezone.now()  # Set the current timestamp
             instance.save()
             return Response(self.get_serializer(instance).data)
-            
+
         return super().update(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):

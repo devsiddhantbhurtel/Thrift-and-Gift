@@ -11,6 +11,9 @@ interface DonationProduct {
   description: string;
   image: string;
   donator_user: number;
+  removed?: boolean;
+  removal_reason?: string;
+  removed_at?: string;  // Add this field
 }
 
 const EditDonation: React.FC = () => {
@@ -47,10 +50,14 @@ const EditDonation: React.FC = () => {
       const token = getToken();
       const formDataToSend = new FormData();
 
-      // Append all fields to the FormData object
+      // Append all fields to the FormData object, excluding 'removed', 'removal_reason', and 'removed_at'
       Object.keys(formData).forEach(key => {
-        const value = formData[key as keyof DonationProduct];
-        formDataToSend.append(key, typeof value === 'number' ? value.toString() : value);
+        if (key !== 'removed' && key !== 'removal_reason' && key !== 'removed_at') {
+          const value = formData[key as keyof DonationProduct];
+          if (value !== undefined && value !== null && typeof value !== 'boolean') {
+            formDataToSend.append(key, typeof value === 'number' ? value.toString() : value);
+          }
+        }
       });
 
       // Append the image file if it exists

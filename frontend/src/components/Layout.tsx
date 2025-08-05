@@ -105,7 +105,11 @@ export function Layout({ children, setSearchQuery }: LayoutProps) {
             </Link>
             {isAuthenticated ? (
               <>
-                {user?.role === 'seller' ? (
+                {user?.is_superuser ? (
+                  <Link to="/admin-dashboard" className="text-gray-700 hover:text-blue-600">
+                    Admin Dashboard
+                  </Link>
+                ) : user?.role === 'seller' ? (
                   <Link to="/seller-main" className="text-gray-700 hover:text-blue-600">
                     Dashboard
                   </Link>

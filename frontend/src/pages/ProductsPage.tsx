@@ -30,6 +30,7 @@ export function ProductPage() {
   const { item_id } = useParams<{ item_id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth(); // Get the authenticated user
+  const { cartItems, addToCart } = useCart(); // Get cart items and addToCart function
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -39,7 +40,7 @@ export function ProductPage() {
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const [isAdding, setIsAdding] = useState(false);
   const [showSellerModal, setShowSellerModal] = useState(false); // State for seller modal
-  const { addToCart } = useCart();
+  const [showEmptyCartModal, setShowEmptyCartModal] = useState(false);
 
   useEffect(() => {
     if (!item_id) {
@@ -108,6 +109,12 @@ export function ProductPage() {
     // Check if the user is a seller
     if (user?.role === 'seller') {
       setShowSellerModal(true); // Show the seller modal
+      return;
+    }
+
+    // Check if cart is empty
+    if (cartItems.length === 0) {
+      setShowEmptyCartModal(true);
       return;
     }
 
@@ -229,7 +236,7 @@ export function ProductPage() {
               onClick={handleBuyNow}
               className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
-              Buy Now
+              Proceed to Checkout
             </button>
           </div>
           <div className="space-y-2">
@@ -295,6 +302,12 @@ export function ProductPage() {
       <Modal isOpen={showSellerModal} onClose={() => setShowSellerModal(false)}>
         <h2 className="text-xl font-bold mb-4">Restricted Action</h2>
         <p className="text-gray-600">Only buyers can purchase products. Sellers are not allowed to buy.</p>
+      </Modal>
+
+      {/* Empty Cart Modal */}
+      <Modal isOpen={showEmptyCartModal} onClose={() => setShowEmptyCartModal(false)}>
+        <h2 className="text-xl font-bold mb-4">Empty Cart</h2>
+        <p className="text-gray-600">Please add items to your cart before proceeding to checkout.</p>
       </Modal>
     </div>
   );

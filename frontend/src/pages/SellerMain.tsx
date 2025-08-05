@@ -15,7 +15,7 @@ interface Product {
   image: string;
   clothing_user_id: number;
   donation_id?: number; // Optional field for donation products
-  phonenumber:number;
+  phonenumber: number;
   category: string;
   removed?: boolean;
   removal_reason?: string;
@@ -49,11 +49,11 @@ const SellerDashboard: React.FC = () => {
         });
         if (!response.ok) throw new Error("Failed to fetch products");
         const data = await response.json();
-        
+
         // Separate removed and active products
         const activeProducts = data.filter((product: Product) => !product.removed);
         const removedItems = data.filter((product: Product) => product.removed);
-        
+
         setProducts(activeProducts);
         setRemovedProducts(removedItems);
       } catch (error) {
@@ -71,11 +71,11 @@ const SellerDashboard: React.FC = () => {
         });
         if (!response.ok) throw new Error("Failed to fetch donation products");
         const data = await response.json();
-        
+
         // Separate active and removed donations
         const activeDonations = data.filter((donation: Product) => !donation.removed);
         const removedDonations = data.filter((donation: Product) => donation.removed);
-        
+
         setDonationProducts(activeDonations);
         setRemovedDonations(removedDonations);
       } catch (error) {
@@ -98,7 +98,6 @@ const SellerDashboard: React.FC = () => {
       navigate("/edit-product", { state: { product } });
     }
   };
-  
 
   const handleDeleteProduct = async (productId: number) => {
     try {
@@ -128,7 +127,7 @@ const SellerDashboard: React.FC = () => {
     try {
       const token = getToken();
       const finalReason = removalReason === "other" ? otherReason : removalReason;
-      
+
       const response = await fetch(`http://localhost:8000/api/clothing/${selectedProduct.item_id}/`, {
         method: "PATCH",
         headers: {
@@ -147,10 +146,10 @@ const SellerDashboard: React.FC = () => {
       }
 
       const updatedProduct = await response.json();
-      
+
       // Update the products state
       setProducts(products.filter(p => p.item_id !== selectedProduct.item_id));
-      
+
       // Add to removed products
       setRemovedProducts(prevRemoved => [...prevRemoved, updatedProduct]);
 
@@ -176,7 +175,7 @@ const SellerDashboard: React.FC = () => {
     try {
       const token = getToken();
       const finalReason = donationRemovalReason === "other" ? donationOtherReason : donationRemovalReason;
-      
+
       const response = await fetch(`http://localhost:8000/api/clothing_bank/${selectedDonation.donation_id}/`, {
         method: "PATCH",
         headers: {
@@ -195,10 +194,10 @@ const SellerDashboard: React.FC = () => {
       }
 
       const updatedDonation = await response.json();
-      
+
       // Update the donations state
       setDonationProducts(donationProducts.filter(p => p.donation_id !== selectedDonation.donation_id));
-      
+
       // Add to removed donations
       setRemovedDonations(prevRemoved => [...prevRemoved, updatedDonation]);
 
@@ -341,7 +340,7 @@ const SellerDashboard: React.FC = () => {
           <div className="bg-white rounded-xl p-6 max-w-md w-full">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Remove Product</h3>
             <p className="text-gray-600 mb-4">Please select the reason for removing this product:</p>
-            
+
             <div className="space-y-3 mb-4">
               <label className="flex items-center space-x-2">
                 <input
@@ -354,7 +353,7 @@ const SellerDashboard: React.FC = () => {
                 />
                 <span>The products are no longer available</span>
               </label>
-              
+
               <label className="flex items-center space-x-2">
                 <input
                   type="radio"
@@ -366,7 +365,7 @@ const SellerDashboard: React.FC = () => {
                 />
                 <span>I don't want to sell this product anymore</span>
               </label>
-              
+
               <label className="flex items-center space-x-2">
                 <input
                   type="radio"
@@ -526,7 +525,7 @@ const SellerDashboard: React.FC = () => {
           <div className="bg-white rounded-xl p-6 max-w-md w-full">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Remove Donation</h3>
             <p className="text-gray-600 mb-4">Please select the reason for removing this donation:</p>
-            
+
             <div className="space-y-3 mb-4">
               <label className="flex items-center space-x-2">
                 <input
@@ -539,7 +538,7 @@ const SellerDashboard: React.FC = () => {
                 />
                 <span>The items are no longer available</span>
               </label>
-              
+
               <label className="flex items-center space-x-2">
                 <input
                   type="radio"
@@ -551,7 +550,7 @@ const SellerDashboard: React.FC = () => {
                 />
                 <span>I don't want to donate these items anymore</span>
               </label>
-              
+
               <label className="flex items-center space-x-2">
                 <input
                   type="radio"

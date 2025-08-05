@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from .models import Payment  # ✅ Only import models, not views
+from .models import Payment
 from users.serializers import UserSerializer
-from clothing.serializers import ClothingItemSerializer  # Import the clothing item serializer
+from clothing.serializers import ClothingItemSerializer
 
 class PaymentSerializer(serializers.ModelSerializer):
-    sender = UserSerializer(read_only=True)  # Include sender details
-    item = ClothingItemSerializer(read_only=True)  # Include item details
+    sender = UserSerializer(read_only=True)
+    item = ClothingItemSerializer(read_only=True)
     
     class Meta:
         model = Payment
-        fields = '__all__'  # ✅ Ensure all fields are serialized
+        fields = ['payment_id', 'amount', 'payment_date', 'payment_status', 'sender', 'item'] 

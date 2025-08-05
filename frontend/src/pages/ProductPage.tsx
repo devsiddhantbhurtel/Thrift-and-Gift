@@ -29,12 +29,14 @@ export function ProductPage() {
   const { item_id } = useParams<{ item_id: string }>();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { user } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
+  const [showSellerModal, setShowSellerModal] = useState(false);
 
   useEffect(() => {
     if (!item_id) {
@@ -87,25 +89,29 @@ export function ProductPage() {
   const handleBuyNow = () => {
     if (!product) return;
     
-    console.log('Initiating Buy Now for product:', product.item_id);
+    // Check if the user is a seller
+    if (user?.role === 'seller') {
+      setShowSellerModal(true); // Show the seller modal
+      return;
+    }
+
+    // Check if user is authenticated
+    if (!user) {
+      navigate('/login');
+      return;
+    }
     
-    const buyNowItem = {
-      id: product.item_id.toString(),
-      name: product.title,
-      price: product.price,
-      quantity: quantity,
-      image: product.image
-    };
-    
-    console.log('Buy Now Item:', buyNowItem);
-    
-    // Navigate to confirm order with single product data
-    navigate('/confirm-order', {
+    // Navigate to individual confirm order page with product data
+    navigate('/individual-confirm-order', {
       state: {
-        isBuyNow: true,
-        buyNowItem
-      },
-      replace: true
+        product: {
+          id: product.item_id.toString(),
+          name: product.title,
+          price: product.price,
+          quantity: quantity,
+          image: product.image
+        }
+      }
     });
   };
 
@@ -210,7 +216,7 @@ export function ProductPage() {
               onClick={handleBuyNow}
               className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
-              Buy Now
+              Proceed to checkoutdfsdf
             </button>
           </div>
 
